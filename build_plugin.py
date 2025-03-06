@@ -28,14 +28,14 @@ class ZipFileParamType(StringParamType):
 @click.option("--included-directories")
 @click.option("--included-files")
 @click.option("-re", "--regex")
-@click.option("-ex", "--exclude-defaults", is_flag=True)
+@click.option("-ex", "--exclude-defaults")
 @click.option("-lib", "--lib-directory", default="lib")
 def main(
     archive_name: str,
     included_directories: str | None,
     included_files: str | None,
     regex: str | None,
-    exclude_defaults: bool,
+    exclude_defaults: str,
     lib_directory: str,
 ):
     root = Path("")
