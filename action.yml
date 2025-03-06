@@ -38,12 +38,7 @@ runs:
     - name: Build Archive
       shell: bash
       run: |
-        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/build_plugin.py ${{ inputs.filename }}.zip
-        --included-directories "${{ inputs.dirs }}"
-        --included-files "${{ inputs.files }}"
-        --regex "${{ inputs.regex }}"
-        --exclude-defaults "${{ inputs.exclude_defaults }}"
-        --lib-directory "${{ inputs.libs_dir }}"
+        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/build_plugin.py ${{ inputs.filename }}.zip --included-directories "${{ inputs.dirs }}" --included-files "${{ inputs.files }}" --regex "${{ inputs.regex }}" --exclude-defaults "${{ inputs.exclude_defaults }}" --lib-directory "${{ inputs.libs_dir }}"
 
     - name: Extract Archive To Dist
       shell: bash
