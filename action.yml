@@ -17,8 +17,6 @@ inputs:
     required: false
   files:
     required: false
-  update-version:
-    required: false
 
 runs:
   using: "composite"
@@ -32,10 +30,10 @@ runs:
         uv pip install -r ./requirements.txt --target ./lib
     
     - name: Update Version
-      if: ${{ inputs.update-version != '' }}
+      if: if: ${{ github.event_name != 'release' }}
       shell: bash
       run: |
-        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py ${{ github.event.run_id }}
+        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py ${{ github.sha }}
     
     - name: Build Archive
       shell: bash
