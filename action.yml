@@ -1,0 +1,65 @@
+name: 'Build Plugin'
+description: ''
+inputs:
+  filename:
+    required: false
+    default: ${{ github.repository.name }}
+  discord_webhook_url:
+    required: false
+  libs_dir:
+    required: false
+    default: "lib"
+  regex:
+    required: false
+  exclude_defaults:
+    required: false
+  dirs:
+    required: false
+  files:
+    required: false
+
+runs:
+  using: "composite"
+  env:
+    download_url: https://github-artifact-downloader.cibere.dev/${{ github.repository_owner }}/${{ github.event.repository.name }}/${{ steps.upload-artifact.outputs.artifact-id }}/${{ inputs.filename }}.zip
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Install dependencies
+      run: |
+        uv pip install -r ./requirements.txt -t ./lib
+    
+    - name: Build Archive
+      run: |
+        uv run build_plugin.py ${{ inputs.filename }}.zip
+
+    - name: Extract Archive To Dist
+      run: |
+        mkdir dist
+        unzip -q ${{ inputs.filename }}.zip -d dist
+
+    - name: Upload Archive to workflow artifacts
+      id: upload-artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist
+        name: ${{ inputs.filename }}
+        compression-level: 0
+    
+    - name: Send Artifact Download Url To Webhook
+      uses: tsickert/discord-webhook@v6.0.0
+      if: ${{ inputs.discord_webhook_url != '' }}
+      with:
+        webhook-url: ${{ inputs.discord_webhook_url }}
+        content: ${{ env.download_url }}
+
+    - name: Upload Archive to release artifacts
+      uses: softprops/action-gh-release@v2
+      if: ${{ github.event_name == 'release' }}
+      with:
+        files: ${{ inputs.filename }}.zip
+    
+    - name: Display Download Url
+      shell: bash
+      run: echo ${{ env.download_url }}
