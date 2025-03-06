@@ -59,7 +59,7 @@ def main(
             if (path := Path(fp)).exists()
         )
 
-    ignore_exts = (".dist-info", ".pyc", "__pycache__")
+    ignore_exts = (".dist-info", ".pyc", "__pycache__", ".pyi")
     files_to_add.extend(
         [
             file
