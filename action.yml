@@ -27,14 +27,17 @@ runs:
       uses: astral-sh/setup-uv@v5
 
     - name: Install dependencies
+      shell: bash
       run: |
         uv pip install -r ./requirements.txt -t ./lib
     
     - name: Build Archive
+      shell: bash
       run: |
-        uv run build_plugin.py ${{ inputs.filename }}.zip
+        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/build_plugin.py ${{ inputs.filename }}.zip
 
     - name: Extract Archive To Dist
+      shell: bash
       run: |
         mkdir dist
         unzip -q ${{ inputs.filename }}.zip -d dist
