@@ -29,7 +29,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        uv pip install -r ./requirements.txt -t ./lib
+        uv pip install -r ./requirements.txt --target ./lib
     
     - name: Update Version
       if: ${{ inputs.update-version != '' }}
