@@ -3,7 +3,7 @@ description: ''
 inputs:
   filename:
     required: false
-    default: ${{ github.repository.name }}
+    default: ${{ github.event.repository.name }}
   discord_webhook_url:
     required: false
   libs_dir:
