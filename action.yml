@@ -31,12 +31,14 @@ runs:
     
     - name: Add Version Suffix
       if: ${{ github.event_name != 'release' }}
+      id: update-version
       shell: bash
       run: |
         uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --suffix ${{ github.sha }}
 
     - name: Strip Version Prerelease Tags
       if: ${{ github.event_name == 'release' }}
+      id: update-version
       shell: bash
       run: |
         uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --final
@@ -64,17 +66,13 @@ runs:
       shell: bash
       run: |
         echo "DownloadUrl=https://github-artifact-downloader.cibere.dev/${{ github.repository_owner }}/${{ github.event.repository.name }}/${{ steps.upload-artifact.outputs.artifact-id }}/${{ inputs.filename }}.zip" >> $GITHUB_ENV
-    
-    - name: Print Env
-      shell: bash
-      run: echo ${{ toJson(env) }}
 
     - name: Send Artifact Download Url To Webhook
       uses: tsickert/discord-webhook@v6.0.0
       if: ${{ inputs.discord_webhook_url != '' }}
       with:
         webhook-url: ${{ inputs.discord_webhook_url }}
-        content: "[${{ env.PLUGIN_VERSION }}](${{ env.DownloadUrl }})"
+        content: "[${{ steps.update-version.outputs.PLUGIN_VERSION }}](${{ env.DownloadUrl }})"
     
     - name: Upload Archive to release artifacts
       uses: softprops/action-gh-release@v2
