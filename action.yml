@@ -31,14 +31,14 @@ runs:
     
     - name: Add Version Suffix
       if: ${{ github.event_name != 'release' }}
-      id: update-version
+      id: update-version-1
       shell: bash
       run: |
         uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --suffix ${{ github.sha }}
 
     - name: Strip Version Prerelease Tags
       if: ${{ github.event_name == 'release' }}
-      id: update-version
+      id: update-version-2
       shell: bash
       run: |
         uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --final
@@ -72,7 +72,7 @@ runs:
       if: ${{ inputs.discord_webhook_url != '' }}
       with:
         webhook-url: ${{ inputs.discord_webhook_url }}
-        content: "[${{ steps.update-version.outputs.PLUGIN_VERSION }}](${{ env.DownloadUrl }})"
+        content: "[${{ steps.update-version-1.outputs.PLUGIN_VERSION }}${{ steps.update-version-2.outputs.PLUGIN_VERSION }}](${{ env.DownloadUrl }})"
     
     - name: Upload Archive to release artifacts
       uses: softprops/action-gh-release@v2
