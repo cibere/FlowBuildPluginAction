@@ -7,7 +7,10 @@
 
 from pathlib import Path
 import click
+import os
 import json
+
+github_output = Path(os.environ["GITHUB_OUTPUT"])
 
 
 @click.command
@@ -16,16 +19,20 @@ import json
 def main(suffix: str | None, final: bool):
     file = Path("plugin.json")
     data = json.loads(file.read_text())
-    current: str = data["Version"]
+    version: str = data["Version"]
 
     if suffix:
-        data["Version"] = f"{current}-{suffix}"
+        version = f"{version}-{suffix}"
     elif final:
         for char in ("a", "b", "c"):
-            if char in current:
-                data['Version'] = current = current.split(char)[0]
+            if char in version:
+                version = version.split(char)[0]
 
+    data["Version"] = version
     file.write_text(json.dumps(data, indent=4))
+
+    with github_output.open("a") as file:
+        print(f"PLUGIN_VERSION={version}", file=file)
 
 
 if __name__ == "__main__":
