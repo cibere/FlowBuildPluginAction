@@ -29,12 +29,18 @@ runs:
       run: |
         uv pip install -r ./requirements.txt --target ./lib
     
-    - name: Update Version
+    - name: Add Version Suffix
       if: ${{ github.event_name != 'release' }}
       shell: bash
       run: |
-        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py ${{ github.sha }}
-    
+        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --suffix ${{ github.sha }}
+
+    - name: Strip Version Prerelease Tags
+      if: ${{ github.event_name == 'release' }}
+      shell: bash
+      run: |
+        uv run https://raw.githubusercontent.com/cibere/FlowBuildPluginAction/refs/heads/master/update_version.py --final
+  
     - name: Build Archive
       shell: bash
       run: |
