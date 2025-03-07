@@ -70,7 +70,7 @@ runs:
       if: ${{ inputs.discord_webhook_url != '' }}
       with:
         webhook-url: ${{ inputs.discord_webhook_url }}
-        content: [${{ env.PLUGIN_VERSION }}](${{ env.DownloadUrl }})
+        content: "[${{ env.PLUGIN_VERSION }}](${{ env.DownloadUrl }})"
 
     - name: Upload Archive to release artifacts
       uses: softprops/action-gh-release@v2
