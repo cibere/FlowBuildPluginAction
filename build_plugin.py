@@ -30,6 +30,7 @@ class ZipFileParamType(StringParamType):
 @click.option("-re", "--regex")
 @click.option("-ex", "--exclude-defaults")
 @click.option("-lib", "--lib-directory", default="lib")
+@click.option("--ignored-extensions", default=".dist-info,.pyc,__pycache__,.pyi")
 def main(
     archive_name: str,
     included_directories: str | None,
@@ -37,8 +38,10 @@ def main(
     regex: str | None,
     exclude_defaults: str,
     lib_directory: str,
+    ignored_extensions: str
 ):
     root = Path("")
+    ignore_exts = tuple(ignored_extensions.split(","))
 
     files_to_add = []
 
@@ -49,7 +52,8 @@ def main(
             [
                 file
                 for fp in included_directories.split(",")
-                for file in Path(fp.strip()).iterdir()
+                for file in Path(fp.strip()).rglob("*")
+                if not file.name.endswith(ignore_exts)
             ]
         )
     if not exclude_defaults:
@@ -59,7 +63,6 @@ def main(
             if (path := Path(fp)).exists()
         )
 
-    ignore_exts = (".dist-info", ".pyc", "__pycache__", ".pyi")
     files_to_add.extend(
         [
             file
