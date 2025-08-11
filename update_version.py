@@ -14,16 +14,13 @@ github_output = Path(os.environ["GITHUB_OUTPUT"])
 
 
 @click.command
-@click.option("--suffix")
 @click.option("--final", is_flag=True)
-def main(suffix: str | None, final: bool):
+def main(final: bool):
     file = Path("plugin.json")
     data = json.loads(file.read_text())
     version: str = data["Version"]
 
-    if suffix:
-        version = f"{version}-{suffix}"
-    elif final:
+    if final:
         for char in ("a", "b", "c"):
             if char in version:
                 version = version.split(char)[0]
